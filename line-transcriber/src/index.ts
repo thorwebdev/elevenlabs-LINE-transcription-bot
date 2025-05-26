@@ -20,10 +20,15 @@ app.post("/webhook", async (c) => {
   const body = JSON.parse(bodyText);
   const events = body.events || [];
 
-  const responses = await Promise.all(
-    events.map((event: any) => handleEvent(event, env))
+  c.executionCtx.waitUntil(
+    (async () => {
+      const responses = await Promise.all(
+        events.map((event: any) => handleEvent(event, env))
+      );
+      console.log({ responses });
+    })()
   );
-  console.log({ responses });
+
   return c.text("OK");
 });
 
